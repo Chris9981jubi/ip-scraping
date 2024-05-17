@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IPL Stats Visualization</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h1>IPL Stats Visualization</h1>
+  <canvas id="orangeCapChart"></canvas>
+  <canvas id="mostFoursChart"></canvas>
+  <canvas id="mostSixesChart"></canvas>
+  <canvas id="mostCenturiesChart"></canvas>
+  <canvas id="mostFiftiesChart"></canvas>
+
+  <script>
+    async function fetchData() {
+      const response = await fetch('ipl-stats.json');
+      return response.json();
+    }
+
+    function createChart(ctx, label, data) {
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: data.map(item => item.player),
+          datasets: [{
+            label: label,
+            data: data.map(item => parseInt(item.stat)),
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+
+    async function renderCharts() {
+      const data = await fetchData();
+
+      createChart(document.getElementById('orangeCapChart').getContext('2d'), 'Top 10 Players - Orange Cap', data.orangeCap);
+      createChart(document.getElementById('mostFoursChart').getContext('2d'), 'Top 10 Players - Most Fours', data.mostFours);
+      createChart(document.getElementById('mostSixesChart').getContext('2d'), 'Top 10 Players - Most Sixes', data.mostSixes);
+      createChart(document.getElementById('mostCenturiesChart').getContext('2d'), 'Top 10 Players - Most Centuries', data.mostCenturies);
+      createChart(document.getElementById('mostFiftiesChart').getContext('2d'), 'Top 10 Players - Most Fifties', data.mostFifties);
+    }
+
+    renderCharts();
+  </script>
+</body>
+</html>
